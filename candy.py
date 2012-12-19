@@ -54,19 +54,18 @@ class Omnom(pygame.sprite.Sprite):
 			self.rect.right = screen.get_width()
 	
 	def ready(self, candylist):
-		readybox = self.rect.inflate(20, 50)
-		close_enough = readybox.collidelist(candylist)
-		if close_enough != -1:	#change image
+		bigger = pygame.sprite.collide_rect_ratio(1.5)
+		close_enough = pygame.sprite.spritecollide(self, candylist, False, bigger)
+		if len(close_enough) > 0:	#change image
 			if self.status != 1:
 				self.status = 1
 				self.image = pygame.image.load('omnom-ready.jpg').convert()
-			collidebox = self.rect.inflate(-5, -5)
-			collision = collidebox.collidelist(candylist)
-			if collision != -1:	#eaten candy
+			collision = pygame.sprite.spritecollide(self, candylist, True)
+			if len(collision) > 0:	#eaten candy
 				self.status = 2
 				self.image = pygame.image.load('omnom-eaten.jpg').convert()
 			return collision
 		else:
-			return -1
+			return []
 			
 			

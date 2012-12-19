@@ -17,7 +17,7 @@ character = candy.Omnom()
 allsprites = pygame.sprite.RenderPlain((character))	#group
 clock = pygame.time.Clock()
 
-candylist = []
+candylist = pygame.sprite.RenderPlain()
 cont = True
 round = 0
 score = 0
@@ -34,20 +34,14 @@ while cont:
 	print allsprites
 	if round % 100 == 0:
 		#candy = candy.Candy()
-		candylist.append(candy.Candy())
+		candylist.add(candy.Candy())
 		allsprites.add(candylist)
 	if len(candylist) > 0:
 		result = character.ready(candylist)
 		# should do an action if this was true - start a timer
-		if result != -1:	#THERE WAS A COLLISION
-			candylist.pop(result)
+		if len(result) > 0:	#THERE WAS A COLLISION
 			score += 1
 			pygame.display.set_caption('Raining Candy     ' + repr(score))
-		for item in candylist:
-			if item.rect.bottom == 0:
-				print candylist
-				candylist.remove(item)
-				print candylist
 	screen.blit(background, (0, 0))
 	allsprites.draw(screen)
 	pygame.display.flip()
