@@ -1,0 +1,13 @@
+add in a menu system with the following options:
+- toggle background music
+- toggle sound effects
+- pause game (mention shortcut)
+
++(p) add in a pause button
+
+change the rate at which candy appears based on the current level
+- possibly also bias towards more of the candies being speedy (have a 50% chance of bounding the lower range)
+
+add in a jerk effect for missing slow moving candies at higher levels, meaning omnom won't move for a bit
+
+
