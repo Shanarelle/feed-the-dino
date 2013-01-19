@@ -1,11 +1,14 @@
 import pygame
-import MenuSystem
 import os
 import candy
 import random
+import menuBar
+import options
+
 
 pygame.init()
-pygame.mixer.init()
+#options.init()
+menuBar.init()
 screen = pygame.display.set_mode((560, 320))
 pygame.display.set_caption('Raining Candy')
 pygame.mouse.set_visible(0)
@@ -15,18 +18,6 @@ background.fill((250, 250, 250))
 screen.blit(background, (0, 0))
 pygame.display.flip()
 
-'''
-#set up menu
-MenuSystem.init()
-# create the menus and submenus
-sound_options = MenuSystem.Menu('Sounds', ('Toggle Background Music', 'Toggle Sound Effects'))
-main_menu = MenuSystem.Menu('Menu', ('Options')) #'New Game    (F4)', 'Pause    (p)', 'High Scores', 'Quit'))
-bar = MenuSystem.MenuBar()
-bar.set((main_menu))
-static = bar.lineheigth
-pygame.display.update(bar)
-ms = MenuSystem.MenuSystem()
-'''
 static = 14
 
 #set up omnom character
@@ -34,17 +25,18 @@ character = candy.Omnom()
 allsprites = pygame.sprite.RenderPlain((character))	#group
 clock = pygame.time.Clock()
 
+#set up menu
+sub_menu = menuBar.dropMenu('Sounds', (menuBar.menuItem('Toggle Background Music', options.toggle_background), menuBar.menuItem('Toggle Sound Effects', options.toggle_effects)))
+main_menu = menuBar.dropMenu('File', (menuBar.menuItem('Up', options.increase_volume), menuBar.menuItem('Down', options.decrease_volume), sub_menu))
+bar = menuBar.menuBar(main_menu)
+allsprites.add(bar)
+
 #set up game tracking variables and sound effects
 candylist = pygame.sprite.RenderPlain()
 badlist = pygame.sprite.RenderPlain()
 cont = True
 score = 0
 misses = 0
-missed_sound = pygame.mixer.Sound(os.path.join('data', 'candy-missed.wav'))
-level_up_sound = pygame.mixer.Sound(os.path.join('data', 'level-up.wav'))
-level_up_sound.set_volume(0.1)
-background_music = pygame.mixer.Sound(os.path.join('data', 'background-music.ogg'))
-background_music.set_volume(0.05)
 levelthreshold = 5
 level = 1
 lives = 3
@@ -61,17 +53,7 @@ textRect.centery = screen.get_rect().centery
 screen.blit(text, textRect)
 pygame.display.flip()
 pygame.time.wait(500)
-background_music.play(loops=-1)
-
-'''
-ev = event.wait()
-pygame.display.update(bar.update(ev))
-if bar.choice:
-	print(bar.choice)
-	print(bar.choice_label)
-	print(bar.choice_index)
-pygame.display.flip()
-'''
+options.playbackground()
 
 while cont: 
 	clock.tick(30)
@@ -79,10 +61,10 @@ while cont:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			cont = False
-			background_music.stop()
+			options.stopbackground()
 		elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 			cont = False
-			background_music.stop()
+			options.stopbackground()
 		elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
 			paused = True
 			while paused:
@@ -105,22 +87,8 @@ while cont:
 					allsprites.add(candy.Minus(event.xpos))
 				
 				allsprites.add(candy.Explosion(event.xpos))	
-				missed_sound.play()
+				options.play_soundeffect(options.MISSEDCANDY)
 			pygame.display.set_caption('Raining Candy      Level: ' + repr(level) + ',  Score: ' + repr(score) + ', Candies missed: ' + repr(misses) + ', Lives:' + repr(lives))
-		'''else:	# will only accept mouse motion events
-			if ms:
-				pygame.display.update(ms.update(event))
-				if ms.choice:
-					print(ms.choice)
-					print(ms.choice_label)
-					print(ms.choice_index)
-			#else:
-			pygame.display.update(bar.update(event))
-			if bar.choice:
-				print(bar.choice)
-				print(bar.choice_label)
-				print(bar.choice_index)
-	#bar.draw()	'''
 	allsprites.update()
 	candylist.update()
 	badlist.update()
@@ -143,7 +111,7 @@ while cont:
 		levelthreshold = levelthreshold * 3
 		level += 1
 		pygame.display.set_caption('Raining Candy      Level: ' + repr(level) + ',  Score: ' + repr(score) + ', Candies missed: ' + repr(misses) + ', Lives:' + repr(lives))
-		level_up_sound.play()
+		options.play_soundeffect(options.LEVELUP)
 		text = font.render('Level Up!', True, (0, 0, 255))
 		textRect = text.get_rect()
 		textRect.centerx = screen.get_rect().centerx

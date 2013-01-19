@@ -1,4 +1,4 @@
-add in a menu system with the following options:
++add in a menu system with the following options:
 - toggle background music
 - toggle sound effects
 - pause game (mention shortcut)
