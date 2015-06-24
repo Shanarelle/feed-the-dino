@@ -8,6 +8,18 @@
 change the rate at which candy appears based on the current level
 - possibly also bias towards more of the candies being speedy (have a 50% chance of bounding the lower range)
 
-add in a jerk effect for missing slow moving candies at higher levels, meaning omnom won't move for a bit
+add in a jerk effect for missing slow moving candies at higher levels, meaning dino won't move for a bit
 
+- add in text to tell you about bad candies and missing slow candies
 
+- menu doesn't work in highscore viewing mode
+
+- make speedy candies worth more points
+
+- make lives be displayed on screen
+	- have popping / fizzling sound effect when lose a life
+
+- draw open mouthed triceratops
+
++ add in arrowkey support
+	+ add in velocity

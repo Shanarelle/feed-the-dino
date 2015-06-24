@@ -22,6 +22,8 @@ def init():
 def donothing():
 	print "I am a lie!"
 
+# the master class that will contain references to all sub-menus and drop downs
+# responsible for suspending the game for the duration of the menu interaction
 class menuBar(pygame.sprite.Sprite):
 	def __init__(self, menulist):
 		pygame.sprite.Sprite.__init__(self)
@@ -39,6 +41,7 @@ class menuBar(pygame.sprite.Sprite):
 		screen.blit(background, self.rect)
 		self.image.set_alpha(0)		#make it invisible
 		x = 0
+		# display all the menu item buttons
 		for item in self.menulist:
 			text = self.font.render(menulist.label, True, FONT_COLOUR, BACKGROUND_COLOUR)
 			textRect = text.get_rect()
@@ -47,6 +50,9 @@ class menuBar(pygame.sprite.Sprite):
 			screen.blit(text, textRect)
 			x += textRect.width+6
 	
+	# check if the users mouse is within the menubar area or on any rendered submenus
+	# - if not, return game to its usual flow
+	# - if so, check for any mouseclicks and propagate the event to the menu being clicked on
 	def update(self):
 		pos = pygame.mouse.get_pos()
 		if self.rect.collidepoint(pos):	#hovering within menu system
@@ -79,6 +85,8 @@ class menuBar(pygame.sprite.Sprite):
 			pos = pygame.mouse.get_pos()
 		pygame.mouse.set_visible(False)
 			
+# the class for an actual clickable leaf menu item - function on click will be passed in 
+# at time of creation
 class menuItem():
 	def __init__(self, name, function=donothing):
 		self.label = name
@@ -92,13 +100,13 @@ class menuItem():
 		
 	def render(self, xcoord, ycoord):
 		return self.clicked((xcoord, ycoord))	#just so actual structure of menu not important to know
-		#return pygame.Rect((xcoord, ycoord), (0,0))
 		
 	# does nothing because these are always classed as rendered
 	def derender(self):
 		pass
 		
-		
+# a drop down menu - has a label which you click on to display the menu, and a list of
+# menu items or other drop down menus - nesting not tested beyond 1 level		
 class dropMenu():
 	def __init__(self, name, componentlist):
 		self.label = name
@@ -116,6 +124,7 @@ class dropMenu():
 		self.image.fill(BACKGROUND_COLOUR)
 		self.rect = pygame.Rect(0, 0, self.width, self.height)
 	
+	# render the menu - should be called on parent click if a dropdown menu
 	# xcoord and ycoord should be the upper left corner of the menu
 	def render(self, xcoord, ycoord):
 		if not self.rendered:
@@ -138,10 +147,11 @@ class dropMenu():
 		else:		#this shouldn't be necessary
 			return self.clicked((xcoord, ycoord))
 		
+	# figure out which menu item was clicked and propagate the event
+	# if the label was clicked - return the rendered size of the menu for collision detection
 	def clicked(self, coords):
 		curr_y = coords[1]
 		curr_y -= self.rect.top
-		#print repr(self.rect.right) + 'rect right & x-coord ' + repr(coords[0]) + repr(self.label)
 		if coords[0] < self.rect.right:
 			print 'Some item clicked' + repr(self.label)
 			guess = 0
