@@ -1,6 +1,8 @@
 import pygame
 import sys
 import random
+import os
+
 
 ''' This will create a pygame screen with 10 initial dinos.
 	Press the up arrow to add another dino.
@@ -14,7 +16,8 @@ import random
 '''
 def init_dinos(occupied, numberOfChars):
 	for i in range(numberOfChars):
-		character = pygame.image.load('dino_small.jpg').convert()	# load the image
+		fullname = os.path.join('data', 'dino.jpg')
+		character = pygame.image.load(fullname).convert()	# load the image
 		loc = fresh(character.get_width(), character.get_height())	# determine where to place it
 		if loc != None:
 			occupied.append(loc)							# add it to the list of occupied rects
@@ -42,6 +45,7 @@ def fresh(width, height):
 	while True:
 		x = random.randrange((screen.get_width() - width)/10) * 10
 		y = random.randrange((screen.get_height() - height)/10) * 10
+		print("fresh coordinate candidate: x="+repr(x)+", y="+repr(y))
 		box = pygame.Rect(x, y, width, height)
 		i = i + 1
 		if box.collidelist(occupied) == -1:
@@ -52,7 +56,8 @@ def fresh(width, height):
 
 def draw_dino(location):		#location should be a tuple
 	occupied.append(location)
-	character = pygame.image.load('dino.jpg').convert()
+	fullname = os.path.join('data', 'dino.jpg')
+	character = pygame.image.load(fullname).convert()	# load the image
 	screen.blit(character, location)
 	pygame.display.update()
 	
@@ -80,6 +85,6 @@ while True:
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			erase_dino(event.pos)
 		if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
-			draw_dino(fresh(80,80))
+			draw_dino(fresh(70,72))
 			
 			
