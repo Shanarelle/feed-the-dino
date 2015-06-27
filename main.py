@@ -244,7 +244,7 @@ screen.blit(background, (0, 0))
 pygame.display.flip()
 
 cont = True
-display_play_prompt()
+display_play_prompt(":  ukulele music by www.bensound.com")
 
 while cont:
 	for event in pygame.event.get():

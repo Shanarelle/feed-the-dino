@@ -12,18 +12,29 @@ TEXT_COLOUR = (0,100,0)
 
 #load all sound files
 pygame.mixer.init()
+
+#set background music and sound effects on as default
+soundeffects = True
+music = True
+music_loaded = True
+
 missed_sound = pygame.mixer.Sound(os.path.join('data', 'candy-missed.wav'))
 missed_sound.set_volume(0.2)
 level_up_sound = pygame.mixer.Sound(os.path.join('data', 'level-up.wav'))
 level_up_sound.set_volume(0.2)
 lost_life_sound = pygame.mixer.Sound(os.path.join('data', 'lost-life.wav'))
 lost_life_sound.set_volume(0.2)
-background_music = pygame.mixer.Sound(os.path.join('data', 'background-music.ogg'))
-background_music.set_volume(0.05)
+try:
+	pygame.mixer.music.load(os.path.join('data', 'bensound-ukulele.mp3'))
+except pygame.error, message:
+	print "mp3 files not supported, " + repr(message)
+	try:
+		pygame.mixer.music.load(os.path.join('data', 'background-music.ogg'))
+	except pygame.error, message:
+		music_loaded = False
+		print "neither are ogg. No music today, " + repr(message)
 
-#set background music and sound effects on as default
-soundeffects = True
-music = False
+
 #read the existing list of highscores
 highscores = []
 file = open(os.path.join('data', 'highscores.txt'), 'r')
@@ -43,32 +54,34 @@ print 'highscores: ' + repr(highscores)
 	
 # utility functions to abstract away from the details of the background music
 def playbackground():
-	background_music.play(loops=-1)
+	if music_loaded:
+		pygame.mixer.music.play(0)
+		music = True
 	
 def stopbackground():
-	background_music.stop()
+	if music_loaded:
+		pygame.mixer.music.fadeout(1500)
+		music = False
 	
 # switch between the background music being on or off
 def toggle_background():
 	global music
 	if music:
-		background_music.stop()
-		music = False
+		stopbackground()
 	else:
-		background_music.play(loops=-1)
-		music = True
+		playbackground()
 		
 #increase the volume of all sounds by a small amount
 def increase_volume():
 	missed_sound.set_volume(missed_sound.get_volume() + 0.1)
 	level_up_sound.set_volume(level_up_sound.get_volume() + 0.1)
-	background_music.set_volume(background_music.get_volume() + 0.1)
+	pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.1)
 
 #decrease the volume of all sounds by a small amount
 def decrease_volume():
 	missed_sound.set_volume(missed_sound.get_volume() - 0.1)
 	level_up_sound.set_volume(level_up_sound.get_volume() - 0.1)
-	background_music.set_volume(background_music.get_volume() - 0.1)
+	pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() - 0.1)
 
 # switch between sound effects, such as losing a heart, being on or off
 def toggle_effects():
